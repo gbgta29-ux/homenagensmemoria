@@ -1,29 +1,29 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import Script from 'next/script';
 
 export default function TrackPurchase() {
-  const hasFired = useRef(false);
-
-  useEffect(() => {
-    // O Next.js carrega o Pixel Base de forma "preguiçosa" para não travar o site.
-    // Por isso, nosso gatilho tenta disparar a cada 500ms até achar o Pixel pronto.
-    const interval = setInterval(() => {
-      if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function' && !hasFired.current) {
-        (window as any).fbq('track', 'Purchase', { currency: 'BRL', value: 1.00 });
-        hasFired.current = true;
-        clearInterval(interval);
-        console.log("✅ Evento de Purchase disparado com sucesso!");
-      }
-    }, 500);
-
-    // Desiste após 10 segundos (ex: se o usuário estiver usando um AdBlock forte que bloqueou o Pixel)
-    const timeout = setTimeout(() => clearInterval(interval), 10000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, []);
-  
-  return null;
+  return (
+    <>
+      <Script id="purchase-event" strategy="lazyOnload">
+        {`
+          setTimeout(function() {
+            if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+              console.log("Disparando Purchase via JS");
+              window.fbq('track', 'Purchase', { currency: 'BRL', value: 1.00 });
+            }
+          }, 1500); // Aguarda 1.5s para ter certeza absoluta que o Pixel Base inicializou
+        `}
+      </Script>
+      {/* Fallback à prova de falhas: Dispara a compra mesmo se o JS falhar ou travar */}
+      <noscript>
+        <img 
+          height="1" 
+          width="1" 
+          style={{ display: 'none' }} 
+          src="https://www.facebook.com/tr?id=1071800878779756&ev=Purchase&cd[value]=1.00&cd[currency]=BRL&noscript=1" 
+          alt=""
+        />
+      </noscript>
+    </>
+  );
 }
