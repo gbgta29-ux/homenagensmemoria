@@ -36,11 +36,6 @@ export default function RootLayout({
       </head>
       <body className="bg-zinc-950 text-white min-h-screen">
         {children}
-        <noscript>
-          <img height="1" width="1" style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1071800878779756&ev=PageView&noscript=1"
-          />
-        </noscript>
       </body>
     </html>
   )
