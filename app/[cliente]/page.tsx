@@ -1,6 +1,7 @@
 import { videos } from '../../data/videos';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import TrackPurchase from '../../components/TrackPurchase';
 
 // Gera os meta dados para o WhatsApp!
 export async function generateMetadata({ params }: { params: { cliente: string } }): Promise<Metadata> {
@@ -31,6 +32,9 @@ export default function ClientePage({ params }: { params: { cliente: string } })
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 sm:p-24 bg-zinc-950 text-white">
+      {/* Componente invisível que dispara o Pixel de Purchase assim que a página carrega */}
+      <TrackPurchase />
+      
       <div className="max-w-3xl w-full text-center space-y-8 mt-10">
         {/* Logo / Título */}
         <div className="flex flex-col items-center justify-center space-y-4 mb-8">
